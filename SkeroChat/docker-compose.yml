@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my_postgres
+    environment:
+      POSTGRES_DB: skeroChat
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 991210
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  websocket-server:
+    build:
+      context: ./websocket-server
+    container_name: my_websocket_server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  express-server:
+    build:
+      context: ./express-server
+    container_name: postgres_express
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data: {}
